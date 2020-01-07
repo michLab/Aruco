@@ -73,7 +73,6 @@ uint16_t aruco_ns::Aruco::get_marker_size_pix() const
 void aruco_ns::Aruco::initialize_marker_dictionary()
 {
     aruco_dictionary = cv::aruco::getPredefinedDictionary(aruco_dictionary_name);
-    //aruco_dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_5X5_50);
 }
 
 /**
@@ -88,3 +87,21 @@ void aruco_ns::Aruco::generate_marker(uint16_t marker_id)
     std::string file_name = "marker" + std::to_string(marker_id) + ".png";
     cv::imwrite(file_name, marker_image);
 }
+
+/**
+ * @brief aruco_ns::Aruco::detect
+ * @param arg_image A shared_ptr to cv::Mat
+ * @return true when aruco markers were detected
+ */
+//bool aruco_ns::Aruco::detect(std::shared_ptr<cv::Mat> arg_image)
+bool aruco_ns::Aruco::detect(cv::Mat& arg_image)
+{
+    cv::aruco::detectMarkers(arg_image, aruco_dictionary,
+                             marker_corners, marker_ids);
+    if (marker_ids.size() > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
