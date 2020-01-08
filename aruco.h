@@ -43,6 +43,7 @@ namespace aruco_ns
         uint16_t marker_border_bits;
         std::vector<int> marker_ids;
         std::vector<std::vector<cv::Point2f>> marker_corners;
+        std::vector<std::vector<cv::Point2f>> rejected_candidates;
         cv::aruco::PREDEFINED_DICTIONARY_NAME aruco_dictionary_name;
         cv::Ptr<cv::aruco::Dictionary> aruco_dictionary;
 

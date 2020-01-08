@@ -96,8 +96,12 @@ void aruco_ns::Aruco::generate_marker(uint16_t marker_id)
 //bool aruco_ns::Aruco::detect(std::shared_ptr<cv::Mat> arg_image)
 bool aruco_ns::Aruco::detect(cv::Mat& arg_image)
 {
-    cv::aruco::detectMarkers(arg_image, aruco_dictionary,
-                             marker_corners, marker_ids);
+    cv::Mat frame;
+    cv::Ptr<cv::aruco::DetectorParameters> parameters = cv::aruco::DetectorParameters::create();
+    cv::aruco::detectMarkers(frame, aruco_dictionary, marker_corners,
+                             marker_ids, parameters, rejected_candidates);
+
+
     if (marker_ids.size() > 0) {
         return true;
     } else {
