@@ -11,7 +11,7 @@
 
 #include <cstdint>
 #include <memory>
-#include <opencv2/opencv.hpp>
+//#include <opencv4/opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/aruco.hpp>
 
@@ -46,6 +46,7 @@ namespace aruco_ns
         std::vector<std::vector<cv::Point2f>> rejected_candidates;
         cv::aruco::PREDEFINED_DICTIONARY_NAME aruco_dictionary_name;
         cv::Ptr<cv::aruco::Dictionary> aruco_dictionary;
+        cv::Ptr<cv::aruco::DetectorParameters> aruco_parameters;
 
         void initialize_marker_dictionary();
 

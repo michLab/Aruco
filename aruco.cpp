@@ -15,6 +15,7 @@
 aruco_ns::Aruco::Aruco()
 {
     set_marker_dictionary(cv::aruco::DICT_6X6_250);
+    aruco_parameters = cv::aruco::DetectorParameters::create();
     set_marker_size_pix(200);
     set_marker_border_bits(1);
 }
@@ -96,10 +97,9 @@ void aruco_ns::Aruco::generate_marker(uint16_t marker_id)
 //bool aruco_ns::Aruco::detect(std::shared_ptr<cv::Mat> arg_image)
 bool aruco_ns::Aruco::detect(cv::Mat& arg_image)
 {
-    cv::Mat frame;
-    cv::Ptr<cv::aruco::DetectorParameters> parameters = cv::aruco::DetectorParameters::create();
-    cv::aruco::detectMarkers(frame, aruco_dictionary, marker_corners,
-                             marker_ids, parameters, rejected_candidates);
+
+    cv::aruco::detectMarkers(arg_image, aruco_dictionary, marker_corners,
+                             marker_ids, aruco_parameters, rejected_candidates);
 
 
     if (marker_ids.size() > 0) {
