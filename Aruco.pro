@@ -5,15 +5,18 @@ CONFIG -= qt
 
 SOURCES += \
         aruco.cpp \
-        main.cpp
+        main.cpp \
+        camera/camera.cpp
 
 HEADERS += \
-    aruco.h
+    aruco.h \
+    camera/camera.h
 
 
 INCLUDEPATH += /usr/local/include/opencv \
             /usr/src/gtest/include/gtest \
             /usr/src/gmock/include/gmock
+
 
 
 
