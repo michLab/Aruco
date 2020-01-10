@@ -30,6 +30,7 @@ namespace aruco_ns
         Aruco();
         void generate_marker(uint16_t marker_id);
         bool detect(cv::Mat& arg_image);
+        void draw_detected(cv::Mat& image);
 
         void set_marker_dictionary(cv::aruco::PREDEFINED_DICTIONARY_NAME arg_dict_name);
         bool set_marker_size_pix(uint16_t arg_size);
@@ -47,6 +48,7 @@ namespace aruco_ns
         cv::aruco::PREDEFINED_DICTIONARY_NAME aruco_dictionary_name;
         cv::Ptr<cv::aruco::Dictionary> aruco_dictionary;
         cv::Ptr<cv::aruco::DetectorParameters> aruco_parameters;
+        cv::Mat copied_image;
 
         void initialize_marker_dictionary();
 

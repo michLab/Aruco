@@ -94,7 +94,6 @@ void aruco_ns::Aruco::generate_marker(uint16_t marker_id)
  * @param arg_image A shared_ptr to cv::Mat
  * @return true when aruco markers were detected
  */
-//bool aruco_ns::Aruco::detect(std::shared_ptr<cv::Mat> arg_image)
 bool aruco_ns::Aruco::detect(cv::Mat& arg_image)
 {
 
@@ -107,5 +106,15 @@ bool aruco_ns::Aruco::detect(cv::Mat& arg_image)
     } else {
         return false;
     }
+}
+
+/**
+ * @brief aruco_ns::Aruco::draw_detected
+ * @param image a reference to image, on which the aruco
+ * markers will be drawn
+ */
+void aruco_ns::Aruco::draw_detected(cv::Mat& image)
+{
+   cv::aruco::drawDetectedMarkers(image, marker_corners, marker_ids);
 }
 
