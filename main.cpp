@@ -5,10 +5,11 @@
 //#define CAM_CALIBRATE
 
 using namespace std;
-
+constexpr aruco_ns::SizeMeters marker_size_m = 0.05178f;
 int main()
 {
     aruco_ns::Aruco aruco;
+    aruco.set_marker_size_meters(marker_size_m);
     /// Create camera object and get calibration data:
     camera_ns::Camera cam;
     cam.set_video_source(0);
@@ -26,6 +27,8 @@ int main()
     if(cam.get_calibrated() == false) {
         try {
             cam.load_camera_calibration_data();
+            aruco.set_camera_matrix(cam.get_camera_matrix());
+            aruco.set_dist_coefs(cam.get_dist_coefs());
         } catch (camera_ns::ExceptionMessage ex) {
             std::cout << ex.msg << std::endl;
         }
@@ -47,6 +50,7 @@ int main()
         cv::Mat& frame_for_aruco = cam.get_reference_to_frame_calibrated();
         if (aruco.detect(frame_for_aruco)) {
             aruco.draw_detected(frame_for_aruco);
+            aruco.estimate_pose_single_markers();
         }
         cv::imshow("Aruco", frame_for_aruco);
         cv::waitKey(10);

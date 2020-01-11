@@ -18,6 +18,9 @@ aruco_ns::Aruco::Aruco()
     aruco_parameters = cv::aruco::DetectorParameters::create();
     set_marker_size_pix(200);
     set_marker_border_bits(1);
+    set_marker_size_meters(0.05);
+    camera_matrix = cv::Mat::zeros(0, 0, CV_64F);
+    dist_coefs = cv::Mat::zeros(0, 0, CV_64F);
 }
 
 /**
@@ -41,6 +44,17 @@ bool aruco_ns::Aruco::set_marker_size_pix(uint16_t arg_size)
 }
 
 /**
+ * @brief aruco_ns::Aruco::set_marker_size_meters
+ * @param arg_size Marker side size [m]
+ * @return true when succesfull
+ */
+bool aruco_ns::Aruco::set_marker_size_meters(SizeMeters arg_size)
+{
+    marker_size_meters = arg_size;
+    return true;
+}
+
+/**
  * @brief: Sets Aruco marker border bits
  * @param: arg_border_bits Marker border bits
  */
@@ -51,12 +65,43 @@ bool aruco_ns::Aruco::set_marker_border_bits(uint16_t arg_border_bits)
 }
 
 /**
+ * @brief aruco_ns::Aruco::set_camera_matrix
+ * @param arg_m Camera Matrix
+ * @return true when successfull
+ */
+bool aruco_ns::Aruco::set_camera_matrix(cv::Mat arg_m)
+{
+    camera_matrix = arg_m;
+    return true;
+}
+
+/**
+ * @brief aruco_ns::Aruco::set_dist_coefs
+ * @param arg_m A dist coefs matriix
+ * @return true when successfull
+ */
+bool aruco_ns::Aruco::set_dist_coefs(cv::Mat arg_m)
+{
+    dist_coefs = arg_m;
+    return true;
+}
+
+/**
  * @brief: Returns Aruco marker border size
  * @return: Border size in bits
  */
 uint16_t aruco_ns::Aruco::get_marker_border_bits() const
 {
     return marker_border_bits;
+}
+
+/**
+ * @brief aruco_ns::Aruco::get_marker_size_meters
+ * @return Marker side size [m]
+ */
+aruco_ns::SizeMeters aruco_ns::Aruco::get_marker_size_meters() const
+{
+    return marker_size_meters;
 }
 
 /**
@@ -115,6 +160,17 @@ bool aruco_ns::Aruco::detect(cv::Mat& arg_image)
  */
 void aruco_ns::Aruco::draw_detected(cv::Mat& image)
 {
-   cv::aruco::drawDetectedMarkers(image, marker_corners, marker_ids);
+    cv::aruco::drawDetectedMarkers(image, marker_corners, marker_ids);
 }
+
+void aruco_ns::Aruco::estimate_pose_single_markers()
+{
+    if (camera_matrix.rows > 0 and camera_matrix.cols > 0
+            and dist_coefs.rows > 0 and dist_coefs.cols > 0) {
+        cv::aruco::estimatePoseSingleMarkers(marker_corners, marker_size_meters,
+                                             camera_matrix, dist_coefs,
+                                             rvecs, tvecs);
+    }
+}
+
 

@@ -21,6 +21,10 @@
  */
 namespace aruco_ns
 {
+    typedef float SizeMeters;
+    typedef uint16_t SizePixels;
+    typedef uint16_t SizeBits;
+    typedef cv::Mat Image;
     /**
      * @brief The Aruco class
      */
@@ -29,15 +33,20 @@ namespace aruco_ns
     public:
         Aruco();
         void generate_marker(uint16_t marker_id);
-        bool detect(cv::Mat& arg_image);
         void draw_detected(cv::Mat& image);
+        void estimate_pose_single_markers();
+        bool detect(cv::Mat& arg_image);
 
         void set_marker_dictionary(cv::aruco::PREDEFINED_DICTIONARY_NAME arg_dict_name);
         bool set_marker_size_pix(uint16_t arg_size);
+        bool set_marker_size_meters(SizeMeters arg_size);
         bool set_marker_border_bits(uint16_t arg_border_bits);
+        bool set_camera_matrix(cv::Mat arg_m);
+        bool set_dist_coefs(cv::Mat arg_m);
 
         uint16_t get_marker_size_pix() const;
         uint16_t get_marker_border_bits() const;
+        SizeMeters get_marker_size_meters() const;
 
     private:
         uint16_t marker_size_pix;
@@ -45,10 +54,15 @@ namespace aruco_ns
         std::vector<int> marker_ids;
         std::vector<std::vector<cv::Point2f>> marker_corners;
         std::vector<std::vector<cv::Point2f>> rejected_candidates;
+        std::vector<cv::Vec3d> rvecs; /// Rotation vectors to detected markers
+        std::vector<cv::Vec3d> tvecs; /// Translation vectors to detected markers
         cv::aruco::PREDEFINED_DICTIONARY_NAME aruco_dictionary_name;
         cv::Ptr<cv::aruco::Dictionary> aruco_dictionary;
         cv::Ptr<cv::aruco::DetectorParameters> aruco_parameters;
         cv::Mat copied_image;
+        cv::Mat camera_matrix;
+        cv::Mat dist_coefs;
+        SizeMeters marker_size_meters;
 
         void initialize_marker_dictionary();
 
