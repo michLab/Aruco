@@ -2,6 +2,8 @@
 #include <aruco.h>
 #include <camera/camera.h>
 
+//#define CAM_CALIBRATE
+
 using namespace std;
 
 int main()
@@ -11,6 +13,16 @@ int main()
     camera_ns::Camera cam;
     cam.set_video_source(0);
     cam.set_camera_calibration_results_file_name("cam_calib.txt");
+#ifdef CAM_CALIBRATE
+    cam.set_chessboard_dimensions(6,9);
+    cam.set_chessboard_square_dimension(0.0268f);
+    cam.set_number_of_images_to_calibrate(20);
+    try {
+        cam.calibrate();
+    } catch (camera_ns::ExceptionMessage ex) {
+        std::cout << ex.msg << std::endl;
+    }
+#endif
     if(cam.get_calibrated() == false) {
         try {
             cam.load_camera_calibration_data();
@@ -27,12 +39,12 @@ int main()
             cam.read();
             //cam.show_frame_raw();
             cam.compensate_distortions(camera_ns::CorrectionType::undistort);
-            cam.show_frame_compensated();
+            //cam.show_frame_compensated();
         } catch (camera_ns::ExceptionMessage ex) {
             std::cout << ex.msg << std::endl;
         }
         /// Aruco will work on copied frame:
-        cv::Mat frame_for_aruco = cam.get_frame_raw();
+        cv::Mat& frame_for_aruco = cam.get_reference_to_frame_calibrated();
         if (aruco.detect(frame_for_aruco)) {
             aruco.draw_detected(frame_for_aruco);
         }
