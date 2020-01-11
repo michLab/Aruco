@@ -9,10 +9,11 @@
 #include "aruco.h"
 #include <opencv2/opencv.hpp>
 
+using namespace aruco_ns;
 /**
  * @brief: Default constructor
  */
-aruco_ns::Aruco::Aruco()
+Aruco::Aruco()
 {
     set_marker_dictionary(cv::aruco::DICT_6X6_250);
     aruco_parameters = cv::aruco::DetectorParameters::create();
@@ -28,7 +29,7 @@ aruco_ns::Aruco::Aruco()
  * @brief: Sets Aruco marker dictionary
  * @param: arg_dict_name A openCV aruco dictionary name (enum)
  */
-void aruco_ns::Aruco::set_marker_dictionary(cv::aruco::PREDEFINED_DICTIONARY_NAME arg_dict_name)
+void Aruco::set_marker_dictionary(cv::aruco::PREDEFINED_DICTIONARY_NAME arg_dict_name)
 {
     aruco_dictionary_name = arg_dict_name;
     initialize_marker_dictionary();
@@ -38,7 +39,7 @@ void aruco_ns::Aruco::set_marker_dictionary(cv::aruco::PREDEFINED_DICTIONARY_NAM
  * @brief aruco_ns::Aruco::set_marker_axis_size_meters
  * @param arg_s Marker axis size [m]
  */
-void aruco_ns::Aruco::set_marker_axis_size_meters(aruco_ns::SizeMeters arg_s)
+void Aruco::set_marker_axis_size_meters(SizeMeters arg_s)
 {
     axis_size = arg_s;
 }
@@ -47,7 +48,7 @@ void aruco_ns::Aruco::set_marker_axis_size_meters(aruco_ns::SizeMeters arg_s)
  * @brief: Sets Aruco marker side size (pixel)
  * @param: arg_size Side size in pixels
  */
-bool aruco_ns::Aruco::set_marker_size_pix(uint16_t arg_size)
+bool Aruco::set_marker_size_pix(SizePixels arg_size)
 {
     marker_size_pix = arg_size;
     return true;
@@ -58,7 +59,7 @@ bool aruco_ns::Aruco::set_marker_size_pix(uint16_t arg_size)
  * @param arg_size Marker side size [m]
  * @return true when succesfull
  */
-bool aruco_ns::Aruco::set_marker_size_meters(SizeMeters arg_size)
+bool Aruco::set_marker_size_meters(SizeMeters arg_size)
 {
     marker_size_meters = arg_size;
     return true;
@@ -68,7 +69,7 @@ bool aruco_ns::Aruco::set_marker_size_meters(SizeMeters arg_size)
  * @brief: Sets Aruco marker border bits
  * @param: arg_border_bits Marker border bits
  */
-bool aruco_ns::Aruco::set_marker_border_bits(uint16_t arg_border_bits)
+bool Aruco::set_marker_border_bits(SizeBits arg_border_bits)
 {
     marker_border_bits = arg_border_bits;
     return true;
@@ -79,7 +80,7 @@ bool aruco_ns::Aruco::set_marker_border_bits(uint16_t arg_border_bits)
  * @param arg_m Camera Matrix
  * @return true when successfull
  */
-bool aruco_ns::Aruco::set_camera_matrix(cv::Mat arg_m)
+bool Aruco::set_camera_matrix(CameraMatrix arg_m)
 {
     camera_matrix = arg_m;
     return true;
@@ -90,7 +91,7 @@ bool aruco_ns::Aruco::set_camera_matrix(cv::Mat arg_m)
  * @param arg_m A dist coefs matriix
  * @return true when successfull
  */
-bool aruco_ns::Aruco::set_dist_coefs(cv::Mat arg_m)
+bool Aruco::set_dist_coefs(DistCoefs arg_m)
 {
     dist_coefs = arg_m;
     return true;
@@ -100,7 +101,7 @@ bool aruco_ns::Aruco::set_dist_coefs(cv::Mat arg_m)
  * @brief: Returns Aruco marker border size
  * @return: Border size in bits
  */
-uint16_t aruco_ns::Aruco::get_marker_border_bits() const
+SizeBits Aruco::get_marker_border_bits() const
 {
     return marker_border_bits;
 }
@@ -109,7 +110,7 @@ uint16_t aruco_ns::Aruco::get_marker_border_bits() const
  * @brief aruco_ns::Aruco::get_marker_size_meters
  * @return Marker side size [m]
  */
-aruco_ns::SizeMeters aruco_ns::Aruco::get_marker_size_meters() const
+SizeMeters Aruco::get_marker_size_meters() const
 {
     return marker_size_meters;
 }
@@ -118,7 +119,7 @@ aruco_ns::SizeMeters aruco_ns::Aruco::get_marker_size_meters() const
  * @brief aruco_ns::Aruco::get_axis_size
  * @return Marker axis size [m]
  */
-aruco_ns::SizeMeters aruco_ns::Aruco::get_axis_size() const
+SizeMeters Aruco::get_axis_size() const
 {
     return axis_size;
 }
@@ -127,7 +128,7 @@ aruco_ns::SizeMeters aruco_ns::Aruco::get_axis_size() const
  * @brief: Returns Aruco marker side size (pixel)
  * @return: Side size in pixels
  */
-uint16_t aruco_ns::Aruco::get_marker_size_pix() const
+SizePixels Aruco::get_marker_size_pix() const
 {
     return marker_size_pix;
 }
@@ -135,7 +136,7 @@ uint16_t aruco_ns::Aruco::get_marker_size_pix() const
 /**
  * @brief: Initialize Aruco marker dictionary
  */
-void aruco_ns::Aruco::initialize_marker_dictionary()
+void Aruco::initialize_marker_dictionary()
 {
     aruco_dictionary = cv::aruco::getPredefinedDictionary(aruco_dictionary_name);
 }
@@ -144,7 +145,7 @@ void aruco_ns::Aruco::initialize_marker_dictionary()
  * @brief: Generate Aruco marker with given ID from Aruco Dictionary
  * @param: arg_dict_name A openCV aruco dictionary name (enum)
  */
-void aruco_ns::Aruco::generate_marker(uint16_t marker_id)
+void Aruco::generate_marker(MarkerID marker_id)
 {
     cv::Mat marker_image;
     cv::aruco::drawMarker(aruco_dictionary, marker_id, marker_size_pix,
@@ -158,7 +159,7 @@ void aruco_ns::Aruco::generate_marker(uint16_t marker_id)
  * @param arg_image A shared_ptr to cv::Mat
  * @return true when aruco markers were detected
  */
-bool aruco_ns::Aruco::detect(cv::Mat& arg_image)
+bool Aruco::detect(Image& arg_image)
 {
 
     cv::aruco::detectMarkers(arg_image, aruco_dictionary, marker_corners,
@@ -177,12 +178,12 @@ bool aruco_ns::Aruco::detect(cv::Mat& arg_image)
  * @param image a reference to image, on which the aruco
  * markers will be drawn
  */
-void aruco_ns::Aruco::draw_detected(cv::Mat& image)
+void Aruco::draw_detected(Image& image)
 {
     cv::aruco::drawDetectedMarkers(image, marker_corners, marker_ids);
 }
 
-void aruco_ns::Aruco::draw_axis(aruco_ns::Image &image)
+void Aruco::draw_axis(Image &image)
 {
     for (std::size_t i =0; i < marker_ids.size(); ++i) {
         cv::aruco::drawAxis(image, camera_matrix, dist_coefs,
@@ -190,13 +191,18 @@ void aruco_ns::Aruco::draw_axis(aruco_ns::Image &image)
     }
 }
 
-void aruco_ns::Aruco::estimate_pose_single_markers()
+/**
+ * @brief Aruco::estimate_pose_single_markers
+ */
+void Aruco::estimate_pose_single_markers()
 {
     if (camera_matrix.rows > 0 and camera_matrix.cols > 0
             and dist_coefs.rows > 0 and dist_coefs.cols > 0) {
         cv::aruco::estimatePoseSingleMarkers(marker_corners, marker_size_meters,
                                              camera_matrix, dist_coefs,
                                              rvecs, tvecs);
+    } else {
+        ;
     }
 }
 
