@@ -52,6 +52,7 @@ int main()
             aruco.draw_detected(frame_for_aruco);
             aruco.estimate_pose_single_markers();
             aruco.draw_axis(frame_for_aruco);
+            aruco.draw_pose_info(frame_for_aruco);
         }
         cv::imshow("Aruco", frame_for_aruco);
         cv::waitKey(10);

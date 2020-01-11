@@ -11,7 +11,6 @@
 
 #include <cstdint>
 #include <memory>
-//#include <opencv4/opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/aruco.hpp>
 
@@ -38,6 +37,7 @@ namespace aruco_ns
         void generate_marker(MarkerID marker_id);
         void draw_detected(Image& image);
         void draw_axis(Image& image);
+        void draw_pose_info(Image& image);
         void estimate_pose_single_markers();
         bool detect(Image& arg_image);
 

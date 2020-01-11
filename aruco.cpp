@@ -165,7 +165,6 @@ bool Aruco::detect(Image& arg_image)
     cv::aruco::detectMarkers(arg_image, aruco_dictionary, marker_corners,
                              marker_ids, aruco_parameters, rejected_candidates);
 
-
     if (marker_ids.size() > 0) {
         return true;
     } else {
@@ -183,11 +182,34 @@ void Aruco::draw_detected(Image& image)
     cv::aruco::drawDetectedMarkers(image, marker_corners, marker_ids);
 }
 
+/**
+ * @brief Aruco::draw_axis
+ * @param image An image to draw marker's axes
+ */
 void Aruco::draw_axis(Image &image)
 {
     for (std::size_t i =0; i < marker_ids.size(); ++i) {
         cv::aruco::drawAxis(image, camera_matrix, dist_coefs,
                             rvecs[i], tvecs[i], axis_size);
+    }
+}
+
+/**
+ * @brief Aruco::draw_pose_info
+ * @param image An image to write markers info
+ */
+void Aruco::draw_pose_info(Image &image)
+{
+    const int line_initial_offset = 20;
+    const int line_separation = 20;
+    for (std::size_t i =0; i < marker_ids.size(); ++i) {
+        std::string tmp_str = "ID: " + std::to_string(marker_ids[i]);
+        tmp_str += " x: " + std::to_string(tvecs[i][0]);
+        tmp_str += " y: " + std::to_string(tvecs[i][1]);
+        tmp_str += " z: " + std::to_string(tvecs[i][2]);
+        putText(image, tmp_str, cvPoint(30, line_initial_offset
+                                        + i*line_separation),
+            cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,0,200), 1, CV_AA);
     }
 }
 
