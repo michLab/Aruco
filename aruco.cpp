@@ -18,7 +18,8 @@ aruco_ns::Aruco::Aruco()
     aruco_parameters = cv::aruco::DetectorParameters::create();
     set_marker_size_pix(200);
     set_marker_border_bits(1);
-    set_marker_size_meters(0.05);
+    set_marker_size_meters(0.05f);
+    set_marker_axis_size_meters(0.1f);
     camera_matrix = cv::Mat::zeros(0, 0, CV_64F);
     dist_coefs = cv::Mat::zeros(0, 0, CV_64F);
 }
@@ -31,6 +32,15 @@ void aruco_ns::Aruco::set_marker_dictionary(cv::aruco::PREDEFINED_DICTIONARY_NAM
 {
     aruco_dictionary_name = arg_dict_name;
     initialize_marker_dictionary();
+}
+
+/**
+ * @brief aruco_ns::Aruco::set_marker_axis_size_meters
+ * @param arg_s Marker axis size [m]
+ */
+void aruco_ns::Aruco::set_marker_axis_size_meters(aruco_ns::SizeMeters arg_s)
+{
+    axis_size = arg_s;
 }
 
 /**
@@ -105,6 +115,15 @@ aruco_ns::SizeMeters aruco_ns::Aruco::get_marker_size_meters() const
 }
 
 /**
+ * @brief aruco_ns::Aruco::get_axis_size
+ * @return Marker axis size [m]
+ */
+aruco_ns::SizeMeters aruco_ns::Aruco::get_axis_size() const
+{
+    return axis_size;
+}
+
+/**
  * @brief: Returns Aruco marker side size (pixel)
  * @return: Side size in pixels
  */
@@ -161,6 +180,14 @@ bool aruco_ns::Aruco::detect(cv::Mat& arg_image)
 void aruco_ns::Aruco::draw_detected(cv::Mat& image)
 {
     cv::aruco::drawDetectedMarkers(image, marker_corners, marker_ids);
+}
+
+void aruco_ns::Aruco::draw_axis(aruco_ns::Image &image)
+{
+    for (std::size_t i =0; i < marker_ids.size(); ++i) {
+        cv::aruco::drawAxis(image, camera_matrix, dist_coefs,
+                            rvecs[i], tvecs[i], axis_size);
+    }
 }
 
 void aruco_ns::Aruco::estimate_pose_single_markers()

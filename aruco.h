@@ -34,10 +34,12 @@ namespace aruco_ns
         Aruco();
         void generate_marker(uint16_t marker_id);
         void draw_detected(cv::Mat& image);
+        void draw_axis(Image& image);
         void estimate_pose_single_markers();
         bool detect(cv::Mat& arg_image);
 
         void set_marker_dictionary(cv::aruco::PREDEFINED_DICTIONARY_NAME arg_dict_name);
+        void set_marker_axis_size_meters(SizeMeters arg_s);
         bool set_marker_size_pix(uint16_t arg_size);
         bool set_marker_size_meters(SizeMeters arg_size);
         bool set_marker_border_bits(uint16_t arg_border_bits);
@@ -47,6 +49,7 @@ namespace aruco_ns
         uint16_t get_marker_size_pix() const;
         uint16_t get_marker_border_bits() const;
         SizeMeters get_marker_size_meters() const;
+        SizeMeters get_axis_size() const;
 
     private:
         uint16_t marker_size_pix;
@@ -63,6 +66,7 @@ namespace aruco_ns
         cv::Mat camera_matrix;
         cv::Mat dist_coefs;
         SizeMeters marker_size_meters;
+        SizeMeters axis_size;
 
         void initialize_marker_dictionary();
 

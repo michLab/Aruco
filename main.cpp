@@ -35,7 +35,7 @@ int main()
     }
 
     /// Create window for showing frame with aruco markers:
-    cv::namedWindow("Aruco", CV_WINDOW_AUTOSIZE);
+    cv::namedWindow("Aruco");//, CV_WINDOW_AUTOSIZE);
 
     while (true) {
         try {
@@ -51,6 +51,7 @@ int main()
         if (aruco.detect(frame_for_aruco)) {
             aruco.draw_detected(frame_for_aruco);
             aruco.estimate_pose_single_markers();
+            aruco.draw_axis(frame_for_aruco);
         }
         cv::imshow("Aruco", frame_for_aruco);
         cv::waitKey(10);
