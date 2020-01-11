@@ -6,6 +6,7 @@
   @version 1.0
  */
 
+#include <cmath>
 #include "aruco.h"
 #include <opencv2/opencv.hpp>
 
@@ -207,6 +208,10 @@ void Aruco::draw_pose_info(Image &image)
         tmp_str += " x: " + std::to_string(tvecs[i][0]);
         tmp_str += " y: " + std::to_string(tvecs[i][1]);
         tmp_str += " z: " + std::to_string(tvecs[i][2]);
+        float distance = std::sqrt(pow(tvecs[i][0],2)
+                + pow(tvecs[i][1], 2)
+                + pow(tvecs[i][2], 2));
+        tmp_str += " dist. 3D: " + std::to_string(distance);
         putText(image, tmp_str, cvPoint(30, line_initial_offset
                                         + i*line_separation),
             cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,0,200), 1, CV_AA);
