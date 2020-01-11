@@ -1,93 +1,80 @@
-# A Camera class with calibration procedure (openCV), tested with gtest
+# Aruco markers class: markers generation, detection and pose estimation
 
 This class was created to simplify the process of
-camera distortions calibration and its usage in DIY projects.
-It allows for caliobration (with chessboard), loading of calibration data
-and its usage.
+usage of Aruco markers library.
 
 ## Dependencies:
-Camera class depends from [openCV](https://opencv.org/) and [gtest](https://github.com/google/googletest).
+Aruco class depends from:
+* [openCV](https://opencv.org/)
+* [Camera calibration class](https://github.com/michLab/camera)
 
-## Camera calibration procedure
+## Aruco markers detection
 <p align="center">
-  <img width="920" height="600" src="images/calibration_process.png">
+  <img width="920" height="600" src="images/example_1.png">
   <br>Calibration procedure
 </p>
 
-* In main.cpp file set data fro yout camera and [chessboard](https://docs.opencv.org/master/pattern.png):
-  - camera id
-  - name for camera calibration file (it will be created)
-  - chessboard dimensions (in horizontal view)
-  - chessboard single square side dimension [m]
-  - number of images to perform camera calibration (you shuld use at least 15)
-* Uncomment line with CAM_CALIBRATE definition
-* Compile and run code. The number of current image and total images to acquire is shown in top left corner of
-the camera window. After getting all of images the calibration procesure starts automatically.
-
+* Define side size of Aruco marker:
 ```c++
-#define CAM_CALIBRATE
-int main()
-{
-#ifndef RUN_TESTS
-    camera_ns::Camera cam;
-    cam.set_video_source(0);
-    cam.set_camera_calibration_results_file_name("cam_calib.txt");
-#ifdef CAM_CALIBRATE
-    cam.set_chessboard_dimensions(6,9);
-    cam.set_chessboard_square_dimension(0.0268f);
-    cam.set_number_of_images_to_calibrate(15);
-    try {
-        cam.calibrate();
-    } catch (camera_ns::ExceptionMessage ex) {
-        std::cout << ex.msg << std::endl;
-    }
-    // ...
-}
+constexpr aruco_ns::SizeMeters marker_size_m = 0.05178f;
 ```
-## Camera - normal usage after calibration
-<p align="center">
-  <img width="920" height="400" src="images/calibration_results.png">
-  <br>Calibration results
-</p>
-
-* In main.cpp comment line with CAM_CALIBRATE definition
-* Choose the calibration algorithm: undistort or remap
-* Compile and run program
-* It should load data from calibration file created in calibration stage
-* The raw and calibrated windows shouls appers
-
+* Create Aruco class object:
 ```c++
-//...
+aruco_ns::Aruco aruco;
+aruco.set_marker_size_meters(marker_size_m);
+```
+* Create Camera class object to get camera images and compensate
+distortions. It allows to calibrate camera if needed. Camera calibration matrix
+and dist coeffs are passed to Aruco object:
+```c++
+camera_ns::Camera cam;
+cam.set_video_source(0);
+cam.set_camera_calibration_results_file_name("cam_calib.txt");
+#ifdef CAM_CALIBRATE
+cam.set_chessboard_dimensions(6,9);
+cam.set_chessboard_square_dimension(0.0268f);
+cam.set_number_of_images_to_calibrate(20);
+try {
+    cam.calibrate();
+} catch (camera_ns::ExceptionMessage ex) {
+    std::cout << ex.msg << std::endl;
+}
+#endif
 if(cam.get_calibrated() == false) {
     try {
         cam.load_camera_calibration_data();
+        aruco.set_camera_matrix(cam.get_camera_matrix());
+        aruco.set_dist_coefs(cam.get_dist_coefs());
     } catch (camera_ns::ExceptionMessage ex) {
         std::cout << ex.msg << std::endl;
     }
 }
+```
+* In loop read image, compensate distortions, detect aruco markers, draw them
+and define camera pose relatibe to them:
+```c++
+/// Create window for showing frame with aruco markers:
+cv::namedWindow("Aruco");//, CV_WINDOW_AUTOSIZE);
+
 while (true) {
     try {
         cam.read();
-        cam.show_frame_raw();
         cam.compensate_distortions(camera_ns::CorrectionType::undistort);
-        cam.show_frame_compensated();
     } catch (camera_ns::ExceptionMessage ex) {
         std::cout << ex.msg << std::endl;
     }
+    /// Aruco will work on copied frame:
+    cv::Mat& frame_for_aruco = cam.get_reference_to_frame_calibrated();
+    if (aruco.detect(frame_for_aruco)) {
+        aruco.draw_detected(frame_for_aruco);
+        aruco.estimate_pose_single_markers();
+        aruco.draw_axis(frame_for_aruco);
+        aruco.draw_pose_info(frame_for_aruco);
+    }
+    cv::imshow("Aruco", frame_for_aruco);
     cv::waitKey(10);
 }
-/...
 ```
-
-## Features
-* gtest - in order to run google test uncomment the line with #define RUN_TESTS
-<p align="center">
-  <img width="600" height="350" src="images/gtest.png">
-  <br>Test results
-</p>
-
-* exceptions - namespace camera_ns contaings definition of exception thrown by camera class.
-
 
 ## License
 The contents of this repository are covered under the [MIT License](./LICENSE.txt)
@@ -95,7 +82,7 @@ The contents of this repository are covered under the [MIT License](./LICENSE.tx
 
 ## Contributing
 
-1. Fork it (<https://github.com/michLab/camera.git>)
+1. Fork it (<https://github.com/michLab/Aruco.git>)
 2. Create your feature branch (`git checkout -b feature/fooBar`)
 3. Commit your changes (`git commit -am 'Add some fooBar'`)
 4. Push to the branch (`git push origin feature/fooBar`)

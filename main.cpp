@@ -6,6 +6,7 @@
 
 using namespace std;
 constexpr aruco_ns::SizeMeters marker_size_m = 0.05178f;
+
 int main()
 {
     aruco_ns::Aruco aruco;

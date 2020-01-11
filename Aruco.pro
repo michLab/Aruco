@@ -32,3 +32,6 @@ LIBS += -lopencv_objdetect
 LIBS += -lopencv_imgcodecs
 LIBS += -lopencv_aruco
 LIBS += -lgtest -L/usr/local/lib/googletest -lpthread
+
+DISTFILES += \
+    README.md
